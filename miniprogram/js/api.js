@@ -1,20 +1,22 @@
 export const getMemos = (url, openId) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '/api/memo',
+    wx.cloud.callFunction({
+      name: 'apiPub',
       data: {
-        'openId': openId
+        url: url,
+        openId: openId,
+        method: 'getMemo'
       },
       success(res) {
-        // console.log(res.data)
-        resolve(res.data)
+        console.log(res)
+        if (res.result) {
+          resolve(JSON.parse(res.result))
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '获取失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -23,21 +25,28 @@ export const getMemos = (url, openId) => {
 
 export const sendMemo = (url, openId, content) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '?openId=' + openId,
-      method: "POST",
+    wx.cloud.callFunction({
+      name: 'apiPub',
       data: {
-        content: content
+        url: url,
+        openId: openId,
+        method: 'sendMemo',
+        data: {
+          body: {
+            content: content
+          }
+        }
       },
       success(res) {
-        resolve(res.data)
+        console.log(res)
+        if (res.result) {
+          resolve(res.result)
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '发送失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -46,18 +55,26 @@ export const sendMemo = (url, openId, content) => {
 
 export const deleteMemo = (url, openId, memoId) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '/api/memo/' + memoId + '?openId=' + openId,
-      method: "DELETE",
+    wx.cloud.callFunction({
+      name: 'apiPub',
+      data: {
+        url: url,
+        openId: openId,
+        method: 'deleteMemo',
+        data: {
+          memoId: memoId
+        }
+      },
       success(res) {
-        resolve(res.data)
+        console.log(res.result)
+        if (res.result) {
+          resolve(res.result)
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '删除失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -66,19 +83,27 @@ export const deleteMemo = (url, openId, memoId) => {
 
 export const editMemo = (url, openId, memoId, data) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '/api/memo/' + memoId + '?openId=' + openId,
-      method: "PATCH",
-      data: data,
+    wx.cloud.callFunction({
+      name: 'apiPub',
+      data: {
+        url: url,
+        openId: openId,
+        method: 'editMemo',
+        data: {
+          body: data,
+          memoId: memoId
+        }
+      },
       success(res) {
-        resolve(res.data)
+        console.log(res.result)
+        if (res.result) {
+          resolve(res.result)
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '更新失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -87,19 +112,27 @@ export const editMemo = (url, openId, memoId, data) => {
 
 export const changeMemoPinned = (url, openId, memoId, data) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '/api/memo/' + memoId + '/organizer' + '?openId=' + openId,
-      method: "POST",
-      data: data,
+    wx.cloud.callFunction({
+      name: 'apiPub',
+      data: {
+        url: url,
+        openId: openId,
+        method: 'changeMemoPinned',
+        data: {
+          body: data,
+          memoId: memoId
+        }
+      },
       success(res) {
-        resolve(res.data)
+        console.log(res.result)
+        if (res.result) {
+          resolve(res.result)
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '置顶失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -108,20 +141,25 @@ export const changeMemoPinned = (url, openId, memoId, data) => {
 
 export const signIn = (url, data) => {
   return new Promise((resolve, reject) => {
-    console.log(data)
-    wx.request({
-      url: url + '/api/auth/signin',
-      method: "POST",
-      data: data,
+    wx.cloud.callFunction({
+      name: 'apiPub',
+      data: {
+        url: url,
+        method: 'signIn',
+        data: {
+          body: data
+        }
+      },
       success(res) {
-        resolve(res.data)
+        console.log(res.result)
+        if (res.result) {
+          resolve(res.result)
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '登录失败',
-        })
+        console.log(err)
         reject(err)
       }
     })
@@ -130,18 +168,23 @@ export const signIn = (url, data) => {
 
 export const getTags = (url, openId) => {
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: url + '/api/tag?openId=' + openId,
+    wx.cloud.callFunction({
+      name: 'apiPub',
+      data: {
+        url: url,
+        openId: openId,
+        method: 'getTags'
+      },
       success(res) {
-        console.log(res.data)
-        resolve(res.data)
+        console.log(res)
+        if (res.result) {
+          resolve(JSON.parse(res.result))
+        } else {
+          reject(res)
+        }
       },
       fail(err) {
-        wx.vibrateLong()
-        wx.showToast({
-          icon: 'none',
-          title: '获取失败',
-        })
+        console.log(err)
         reject(err)
       }
     })

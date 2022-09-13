@@ -4,7 +4,8 @@ var app = getApp()
 Page({
 
   data: {
-
+    mode: 'pri',
+    tips: '输入账号密码，账号不存在会自动创建。请妥善保管好自己的邮箱和密码！'
   },
 
   /**
@@ -12,11 +13,30 @@ Page({
    */
   onLoad(options) {
     this.setData({
+      top_btn: app.globalData.top_btn,
       url: app.globalData.url,
       email: '',
       password: '',
       btnDisable: false
     })
+  },
+
+  changeIcon() {
+    wx.vibrateShort()
+    if (this.data.mode == 'pub') {
+      this.setData({
+        url: 'https://memos.wowow.club',
+        tips: '输入账号密码，账号不存在会自动创建。请妥善保管好自己的邮箱和密码！',
+        mode: 'pri'
+      })
+    } else {
+      this.setData({
+        url: '',
+        tips: '多站点登录模式，如不懂此项请切换回去，此模式不支持创建用户，只能登录站点已有用户！',
+        mode: 'pub'
+      })
+    }
+
   },
 
   copy() {
@@ -49,7 +69,7 @@ Page({
       this.setData({
         btnDisable: false
       })
-    } else {
+    } else if (that.data.mode == 'pri') {
       wx.cloud.callFunction({
         name: 'creatuser',
         data: {
@@ -80,8 +100,14 @@ Page({
               // encrypt: true,
               success(res) {
                 console.log(res)
-                wx.redirectTo({
-                  url: '../home/index',
+                wx.setStorage({
+                  key: "url",
+                  data: that.data.url,
+                  success(res) {
+                    wx.redirectTo({
+                      url: '../home/index',
+                    })
+                  }
                 })
               },
               fail(err) {
@@ -91,44 +117,7 @@ Page({
               }
             })
           } else if (code == 500) {
-            app.api.signIn(that.data.url, {
-              "email": that.data.email,
-              "password": that.data.password,
-            }).then(res => {
-              if (res.data) {
-                console.log(res.data.openId)
-                wx.vibrateShort()
-                wx.showToast({
-                  title: '登录成功',
-                })
-                wx.setStorage({
-                  key: "openId",
-                  data: res.data.openId,
-                  // encrypt: true,
-                  success(res) {
-                    console.log(res)
-                    wx.redirectTo({
-                      url: '../home/index',
-                    })
-                  },
-                  fail(err) {
-                    wx.showToast({
-                      title: 'something wrong',
-                    })
-                  }
-                })
-              } else {
-                console.log(res)
-                wx.vibrateLong()
-                wx.showToast({
-                  icon: 'none',
-                  title: '密码错误',
-                })
-                that.setData({
-                  btnDisable: false
-                })
-              }
-            })
+            that.singnIn()
           } else {
             wx.vibrateLong()
             wx.showToast({
@@ -152,8 +141,80 @@ Page({
           })
         }
       })
+    } else {
+      that.singnIn()
     }
 
+  },
+
+  singnIn() {
+    var that = this
+    app.api.signIn(that.data.url, {
+      email: that.data.email,
+      password: that.data.password,
+    }).then(res => {
+      console.log(res)
+      if (typeof res.data === 'undefined') {
+        if (typeof res.error == 'undefined') {
+          wx.vibrateLong()
+          wx.showToast({
+            icon: 'none',
+            title: '网址有误',
+          })
+          that.setData({
+            btnDisable: false
+          })
+        } else if (typeof res.error.message !== 'undefined' && res.error.message == "Incorrect password") {
+          console.log(res)
+          wx.vibrateLong()
+          wx.showToast({
+            icon: 'none',
+            title: '密码错误',
+          })
+          that.setData({
+            btnDisable: false
+          })
+        } else {
+          console.log(res)
+          wx.vibrateLong()
+          wx.showToast({
+            icon: 'none',
+            title: '用户不存在或网址有误',
+          })
+          that.setData({
+            btnDisable: false
+          })
+        }
+      } else {
+        console.log(res.data.openId)
+        wx.vibrateShort()
+        wx.showToast({
+          title: '登录成功',
+        })
+        wx.setStorage({
+          key: "openId",
+          data: res.data.openId,
+          // encrypt: true,
+          success(res) {
+            console.log(res)
+            wx.setStorage({
+              key: "url",
+              data: that.data.url,
+              success(res) {
+                wx.redirectTo({
+                  url: '../home/index',
+                })
+              }
+            })
+          },
+          fail(err) {
+            wx.showToast({
+              title: 'something wrong',
+            })
+          }
+        })
+      }
+    })
   },
 
   /**

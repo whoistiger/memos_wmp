@@ -9,6 +9,7 @@ Page({
   data: {
     halfDialog: 'closeHalfDialog',
     edit: false,
+    state:'加载中……',
     editMemoId: 0,
     memos: [],
     showMemos: [],
@@ -25,29 +26,41 @@ Page({
       top_btn: app.globalData.top_btn
     })
     wx.getStorage({
-      key: "openId",
-      // encrypt: true,
+      key: "url",
       success(res) {
-        // console.log(res.data)
-        app.globalData.openId = res.data
-        that.setData({
-          url: app.globalData.url,
-          openId: res.data,
-          onlineColor: '#FCA417'
-        })
-        var openId = res.data
+        var url = res.data
         wx.getStorage({
-          key: "memos",
+          key: "openId",
+          // encrypt: true,
           success(res) {
+            // console.log(res.data)
+            app.globalData.openId = res.data
             that.setData({
-              memos: res.data,
-              showMemos: res.data.slice(0, 10)
+              url: url,
+              openId: res.data,
+              onlineColor: '#FCA417'
             })
-            that.getMemos(openId)
+            var openId = res.data
+            wx.getStorage({
+              key: "memos",
+              success(res) {
+                that.setData({
+                  memos: res.data,
+                  showMemos: res.data.slice(0, 10)
+                })
+                that.getMemos(openId)
+              },
+              fail(err) {
+                console.log(err)
+                that.getMemos(openId)
+              }
+            })
           },
           fail(err) {
             console.log(err)
-            that.getMemos(openId)
+            wx.redirectTo({
+              url: '../welcom/index',
+            })
           }
         })
       },
@@ -58,6 +71,7 @@ Page({
         })
       }
     })
+
   },
 
   onReachBottom() {
@@ -86,7 +100,7 @@ Page({
   inputTodo() {
     wx.vibrateShort()
     wx.showToast({
-      icon:'none',
+      icon: 'none',
       title: ' - [x] 表示done',
     })
     this.setData({
@@ -102,6 +116,7 @@ Page({
   },
 
   changeMemoPinned(e) {
+    wx.vibrateShort()
     console.log(e.detail.memoid)
     console.log(e.detail.pinned)
     var data = {
@@ -170,8 +185,8 @@ Page({
 
   getMemos(openId) {
     var that = this
-    app.api.getMemos(app.globalData.url, openId).then(result => {
-      console.log(result.data)
+    app.api.getMemos(this.data.url, openId).then(result => {
+      // console.log(result)
       if (!result.data) {
         wx.redirectTo({
           url: '../welcom/index',
@@ -189,6 +204,7 @@ Page({
         var arrMemos = app.memosArrenge(memos)
         that.setData({
           memos: arrMemos,
+          state: '在线',
           showMemos: arrMemos.slice(0, 10),
           onlineColor: '#07C160'
         })
@@ -294,7 +310,7 @@ Page({
 
   sendMemo() {
     var content = this.data.memo
-    var url = app.globalData.url + '/api/memo'
+    var url = this.data.url
     var openId = this.data.openId
     var memos = this.data.memos
     var that = this
