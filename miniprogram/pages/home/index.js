@@ -29,6 +29,7 @@ Page({
       key: "url",
       success(res) {
         var url = res.data
+        app.globalData.url = res.data
         wx.getStorage({
           key: "openId",
           // encrypt: true,
