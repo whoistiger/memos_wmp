@@ -6,7 +6,7 @@
 
 ### 预览 测试账号：test@mail.com 密码：rabithua
 
-![微信图片_20220901133041](https://user-images.githubusercontent.com/34543831/189478411-a4aecce7-942d-4f03-8ad5-498f0f928511.png)
+![Group 7808](https://user-images.githubusercontent.com/34543831/189886720-4d80fd7c-0da9-4a9c-b6b7-1f5062b3c8b0.png)
 
 ### 目前功能有：
 
