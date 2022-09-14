@@ -32,7 +32,7 @@ Page({
     } else {
       this.setData({
         url: '',
-        tips: '多站点登录模式，如不懂此项请切换回去，此模式不支持创建用户，只能登录站点已有用户！',
+        tips: '多站点登录模式，如不懂此项请切换回去，此模式不支持创建用户，只能登录站点已有用户，且访问速度较慢！',
         mode: 'pub'
       })
     }
@@ -314,6 +314,9 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {
-
+    return {
+      title: '麦默——闪念记录',
+      path:'/pages/welcom/index'
+    }
   }
 })

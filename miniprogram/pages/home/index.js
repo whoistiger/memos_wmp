@@ -342,6 +342,9 @@ Page({
           icon: 'none',
           title: 'something wrong',
         })
+        that.setData({
+          sendLoading: false
+        })
       }
     })
   },

@@ -12,12 +12,20 @@
     background: rgb(17, 17, 17) !important;
   }
 
+  page::before {
+    filter: brightness(0.4);
+  }
+
   .welcom .content {
     color: #ffffff80;
   }
 
   .tips .content {
-    color: #07C16080;
+    color: #ffffff80;
+  }
+
+  .piecs {
+    filter: brightness(0.5);
   }
 
   .tips {
