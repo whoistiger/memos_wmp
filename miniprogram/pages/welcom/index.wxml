@@ -17,13 +17,13 @@
       <text class="title">邮箱</text>
       <input cursor-spacing='100' confirm-type="next" focus type="text" placeholder="xxx@xx.com" confirm-type="done" model:value="{{email}}" />
       <text class="title">密码</text>
-      <input type="text" placeholder="输入密码" confirm-type="done" model:value="{{password}}" />
-      <button wx:if="{{email != '' && password != ''}}" style="margin-top: 60rpx;" type="default" size="default" catchtap="creatUser" disabled="{{btnDisable}}" loading="{{btnDisable}}">{{ mode == 'pri' ? '注册/登录':'登录'}}</button>
+      <input type="text" placeholder="输入密码" confirm-type="done" model:value="{{password}}" bindconfirm="creatUser"/>
+      <button style="margin-top: 60rpx;" type="default" size="default" catchtap="creatUser" disabled="{{btnDisable}}" loading="{{btnDisable}}">{{ mode == 'pri' ? '注册/登录':'登录'}}</button>
     </view>
   </view>
-  <movable-area style="width: 100%; height: 600rpx; position: fixed; bottom: -350rpx; pointer-events: none;">
+  <!-- <movable-area style="width: 100%; height: 600rpx; position: fixed; bottom: -350rpx; z-index: 1;">
     <movable-view class="tips" style="background-color: {{mode == 'pri'? '#07C160':'#FCA417'}};" direction="vertical" inertia friction='1' out-of-bounds damping='50' y='20rpx'>
       <view class="content">{{tips}}</view>
     </movable-view>
-  </movable-area>
+  </movable-area> -->
 </view>

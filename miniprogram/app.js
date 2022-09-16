@@ -3,13 +3,34 @@ App({
   apicloud: require('/js/api'),
   apidirect: require('/js/apidirect'),
 
-  onLaunch: function () {
+  onLaunch: function (options) {
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
         traceUser: true,
       });
+    }
+
+    //小程序更新提醒
+    if (options.scene == 1154) {
+
+    } else {
+      if (wx.canIUse('getUpdateManager')) {
+        const updateManager = wx.getUpdateManager()
+        updateManager.onCheckForUpdate(function (res) {
+          if (res.hasUpdate) {
+            updateManager.onUpdateReady(function () {
+              updateManager.applyUpdate()
+            })
+          }
+        })
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+        })
+      }
     }
 
     this.globalData = {
